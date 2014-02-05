@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>eu.rekisoft.android</groupId>
+    <artifactId>lazyworker</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0</version>
+    <name>lazyworker</name>
+    <url>https://github.com/rekire/LazyWorker/</url>
+    <description>A smart control for entering email addresses with automatically checking if the domain exists and if the domain can receive emails.</description>
+    <!--dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    </dependencies-->
+    <!--repositories>
+        <repository>
+            <id>public.maven.repository</id>
+            <name>public.maven.repository on GitHub</name>
+            <url>https://raw.github.com/rekire/LazyWorker/maven</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>public.maven.repository</id>
+            <name>Public Local Repository</name>
+            <url>file://${project.build.directory}/temp-repo/</url>
+        </repository>
+    </distributionManagement-->
+    <scm>
+        <url>git@github.com:rekire/LazyWorker.git</url>
+        <tag>1.0.0</tag>
+        <connection>https://help.github.com/articles/which-remote-url-should-i-use</connection>
+    </scm>
+    <issueManagement>
+        <url>https://github.com/rekire/LazyWorker/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+    <inceptionYear>2013</inceptionYear>
+    <licenses>
+        <license>
+            <name>Rekisoft Public License (RKSPL)</name>
+            <url>http://www.rekisoft.eu/licenses/rkspl.html</url>
+            <comments>This code is licensed under the Rekisoft Public License.</comments>
+        </license>
+    </licenses>
+</project>
