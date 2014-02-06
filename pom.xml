@@ -5,9 +5,9 @@
     <artifactId>lazyworker</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
-    <name>lazyworker</name>
+    <name>LazyWorker</name>
     <url>https://github.com/rekire/LazyWorker/</url>
-    <description>A smart control for entering email addresses with automatically checking if the domain exists and if the domain can receive emails.</description>
+    <description>LazyWorker is a helper class for doing tasks delayed.</description>
     <scm>
         <url>git@github.com:rekire/LazyWorker.git</url>
         <tag>1.0.0</tag>
