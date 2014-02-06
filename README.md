@@ -18,4 +18,4 @@ So it should look like this:
     }
 
 ##Example
-A sample implementation and a demo app will follow soon.
+A sample implementation will follow soon.
