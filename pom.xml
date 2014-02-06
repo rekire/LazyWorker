@@ -8,34 +8,17 @@
     <name>lazyworker</name>
     <url>https://github.com/rekire/LazyWorker/</url>
     <description>A smart control for entering email addresses with automatically checking if the domain exists and if the domain can receive emails.</description>
-    <!--dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    </dependencies-->
-    <!--repositories>
-        <repository>
-            <id>public.maven.repository</id>
-            <name>public.maven.repository on GitHub</name>
-            <url>https://raw.github.com/rekire/LazyWorker/maven</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>public.maven.repository</id>
-            <name>Public Local Repository</name>
-            <url>file://${project.build.directory}/temp-repo/</url>
-        </repository>
-    </distributionManagement-->
     <scm>
         <url>git@github.com:rekire/LazyWorker.git</url>
         <tag>1.0.0</tag>
         <connection>https://help.github.com/articles/which-remote-url-should-i-use</connection>
     </scm>
+    <developers>
+        <developer>
+            <id>rekire</id>
+            <name>René Kilczan</name>
+        </developer>
+    </developers>
     <issueManagement>
         <url>https://github.com/rekire/LazyWorker/issues</url>
         <system>GitHub Issues</system>
