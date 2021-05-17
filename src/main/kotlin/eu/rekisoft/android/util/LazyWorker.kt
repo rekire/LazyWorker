@@ -26,21 +26,36 @@ object LazyWorker {
      * @param lifecycle the lifecycle of the owner
      * @param work the lambda to executed later
      */
-    fun createLifeCycleAwareJob(lifecycle: Lifecycle, work:()->Unit) = Job(lifecycle, work)
+    fun createLifeCycleAwareJob(lifecycle: Lifecycle, work: () -> Unit): Job = MainThreadJob(lifecycle, work)
+
 
     /**
      * Create a new Job
      * @param work the lambda to executed later
      */
-    fun createJob(work:()->Unit) = Job(null, work)
+    fun createJob(work: () -> Unit): Job = MainThreadJob(null, work)
+
+    /**
+     * Create a new Job which uses couroutines
+     * @param work the lambda to executed later
+     */
+    fun createCoroutineJob(scope: CoroutineScope = GlobalScope, work: suspend () -> Unit): Job = SuspendJob(scope, work)
+
+    /** Interface to access the Job API */
+    interface Job {
+        /** Execute the work dalayed */
+        fun doLater(ms: Long)
+        /** Execute the work now */
+        fun doNow()
+    }
 
     /** Wrapper to hold a lambda called work which should be executed later or now */
-    class Job internal constructor(private val lifecycle: Lifecycle?, private val work:()->Unit) {
+    private class MainThreadJob(private val lifecycle: Lifecycle?, private val work: () -> Unit) : Job {
         val handler by lazy { Handler(Looper.getMainLooper()) }
         var lastTask: Task? = null
 
         /** Execute the work dalayed */
-        fun doLater(ms: Long) {
+        override fun doLater(ms: Long) {
             lastTask?.cancel()
             val currentTask = Task(lifecycle, work)
             lastTask = currentTask
@@ -51,9 +66,9 @@ object LazyWorker {
          * Execute the work now. If this is called on the main thread this is executed directly or
          * else posted on the main thread and will be executed on the next run of the main loop.
          */
-        fun doNow() {
+        override fun doNow() {
             lastTask?.cancel()
-            if(Looper.getMainLooper().thread == Thread.currentThread()) {
+            if (Looper.getMainLooper().thread == Thread.currentThread()) {
                 work()
             } else {
                 handler.post {
@@ -63,25 +78,39 @@ object LazyWorker {
         }
     }
 
-    /**
-     * Private wrapper of a work called Task, which will be executed lifecycle aware as requested
-     * or not while creating the Job
-     */
-    private class Task(private val lifecycle: Lifecycle?, private val work:()->Unit): Runnable {
-        /** Flag that this Task was cancled */
-        private var canceled = false
+    /** Wrapper to hold a lambda which should be executed with a coroutine */
+    private class SuspendJob(private val scope: CoroutineScope, private val work: suspend () -> Unit) : Job {
+        /** The currently executed coroutine */
+        private var coroutineJob: kotlinx.coroutines.Job? = null
 
-        /** Mark this task as cancled */
+        /** Execute the work dalayed */
+        override fun doLater(ms: Long) {
+            coroutineJob?.cancel()
+            coroutineJob = scope.launch {
+                delay(ms)
+                work()
+                coroutineJob = null
+            }
+        }
+
+        /** Execute the work on the given scope now */
+        override fun doNow() {
+            coroutineJob?.cancel()
+            scope.launch {
+                work()
+                coroutineJob = null
+            }
+        }
+    }
+
+    private class Task(private val lifecycle: Lifecycle?, private val work: () -> Unit) : Runnable {
+        private var canceled = false
         fun cancel() {
             canceled = true
         }
 
-        /**
-         * Execute the work when the Task is not cancled and the lifececle is at least resumed if a
-         * lifecycle it set
-         */
         override fun run() {
-            if(!canceled && lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) work()
+            if (!canceled && lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) work()
         }
     }
 }
