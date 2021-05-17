@@ -1,0 +1,27 @@
+apply plugin: 'kotlin'
+apply plugin: 'java'
+
+group 'eu.rekisoft.android.util:lazyworker'
+version '2.0.0'
+description 'LazyWorker is a helper class for doing tasks delayed.'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0'
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.0'
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+    compileOnly 'androidx.lifecycle:lifecycle-common:2.3.1'
+    compileOnly 'org.robolectric:android-all:11-robolectric-6757853'
+}

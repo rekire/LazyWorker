@@ -9,7 +9,13 @@
  */
 package eu.rekisoft.android.util;
 
-// TODO add missing imports
+import android.os.Handler
+import android.os.Looper
+import androidx.lifecycle.Lifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Utility for executing delayed tasks, which can been canceled. It you add a task multiple times it
