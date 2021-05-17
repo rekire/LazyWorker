@@ -4,7 +4,7 @@ LazyWorker
 LazyWorker a my helper class for doing tasks delayed. Such as checking inputs which require network
 operations and should not been done after each key down.
 
-##Setup (gradle based)
+## Setup (gradle based)
 
 Edit your `build.gradle` and add this line to your dependencies:
 
@@ -17,5 +17,5 @@ So it should look like this:
         compile 'eu.rekisoft.android:lazyworker:1.0.+'
     }
 
-##Example
-A sample implementation will follow soon.
+## Example
+A sample implementation will follow.
