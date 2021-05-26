@@ -9,9 +9,12 @@
  */
 package eu.rekisoft.android.util;
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -32,20 +35,39 @@ object LazyWorker {
      * @param lifecycle the lifecycle of the owner
      * @param work the lambda to executed later
      */
+    @JvmStatic
     fun createLifeCycleAwareJob(lifecycle: Lifecycle, work: () -> Unit): Job = MainThreadJob(lifecycle, work)
 
+    /**
+     * Create a life cycle aware new Job
+     * @param lifecycle the lifecycle of the owner
+     * @param work the lambda to executed later
+     */
+    @JvmStatic
+    fun createLifeCycleAwareJob(context: Context, work: () -> Unit): Job = MainThreadJob(context.findLifecycle(), work)
 
     /**
      * Create a new Job
      * @param work the lambda to executed later
      */
+    @JvmStatic
     fun createJob(work: () -> Unit): Job = MainThreadJob(null, work)
 
     /**
      * Create a new Job which uses couroutines
      * @param work the lambda to executed later
      */
+    @JvmStatic
     fun createCoroutineJob(scope: CoroutineScope = GlobalScope, work: suspend () -> Unit): Job = SuspendJob(scope, work)
+
+    /** Extension function to find the lifecycle based on the context */
+    private fun Context.findLifecycle() : Lifecycle? {
+        var context: Context? = this
+        while (context != null && context !is LifecycleOwner) {
+            context = (context as? ContextWrapper)?.baseContext
+        }
+        return (context as? LifecycleOwner)?.lifecycle
+    }
 
     /** Interface to access the Job API */
     interface Job {
