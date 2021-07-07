@@ -9,6 +9,7 @@ buildscript {
 
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
+apply plugin: 'signing'
 
 group 'eu.rekisoft.android.util'
 version '2.0.0'
@@ -59,4 +60,54 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven {
+            def releasesRepoUrl = getReleaseRepositoryUrl()
+            def snapshotsRepoUrl = getSnapshotRepositoryUrl()
+            url = isReleaseBuild() ? releasesRepoUrl : snapshotsRepoUrl
+
+            credentials(PasswordCredentials) {
+                username = getRepositoryUsername()
+                password = getRepositoryPassword()
+            }
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+signing {
+    sign publishing.publications."$project.name"
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
+
+def getReleaseRepositoryUrl() {
+    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
+            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+}
+
+def getSnapshotRepositoryUrl() {
+    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
+            : "https://oss.sonatype.org/content/repositories/snapshots/"
+}
+
+def getRepositoryUsername() {
+    return hasProperty('sonatypeUser') ? sonatypeUser : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('sonatypePass') ? sonatypePass : ""
 }
