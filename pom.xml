@@ -4,13 +4,13 @@
     <groupId>eu.rekisoft.android</groupId>
     <artifactId>lazyworker</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <name>LazyWorker</name>
     <url>https://github.com/rekire/LazyWorker/</url>
     <description>LazyWorker is a helper class for doing tasks delayed.</description>
     <scm>
         <url>git@github.com:rekire/LazyWorker.git</url>
-        <tag>1.0.0</tag>
+        <tag>2.0.0</tag>
         <connection>https://help.github.com/articles/which-remote-url-should-i-use</connection>
     </scm>
     <developers>
@@ -27,7 +27,7 @@
     <licenses>
         <license>
             <name>Rekisoft Public License (RKSPL)</name>
-            <url>http://www.rekisoft.eu/licenses/rkspl.html</url>
+            <url>https://www.rekisoft.eu/licenses/rkspl.html</url>
             <comments>This code is licensed under the Rekisoft Public License.</comments>
         </license>
     </licenses>
