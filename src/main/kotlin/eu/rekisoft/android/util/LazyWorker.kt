@@ -25,9 +25,9 @@ import kotlinx.coroutines.launch
  * will been executed after the least desired delay.
  *
  * @author René Kilczan
- * @version 2.0
+ * @version 2.1
  * @copyright This code is licensed under the Rekisoft Public License.<br/>
- * See https://www.rekisoft.eu/licenses/rkspl.html for more informations.
+ * See https://www.rekisoft.eu/licenses/rkspl.html for more information.
  */
 object LazyWorker {
     /**
@@ -36,7 +36,7 @@ object LazyWorker {
      * @param work the lambda to executed later
      */
     @JvmStatic
-    fun createLifeCycleAwareJob(lifecycle: Lifecycle, work: () -> Unit): Job = MainThreadJob(lifecycle, work)
+    fun createLifeCycleAwareJob(lifecycle: Lifecycle, work: Job.() -> Unit): Job = MainThreadJob(lifecycle, work)
 
     /**
      * Create a life cycle aware new Job
@@ -44,24 +44,25 @@ object LazyWorker {
      * @param work the lambda to executed later
      */
     @JvmStatic
-    fun createLifeCycleAwareJob(context: Context, work: () -> Unit): Job = MainThreadJob(context.findLifecycle(), work)
+    fun createLifeCycleAwareJob(context: Context, work: Job.() -> Unit): Job = MainThreadJob(context.findLifecycle(), work)
 
     /**
      * Create a new Job
      * @param work the lambda to executed later
      */
     @JvmStatic
-    fun createJob(work: () -> Unit): Job = MainThreadJob(null, work)
+    fun createJob(work: Job.() -> Unit): Job = MainThreadJob(null, work)
 
     /**
      * Create a new Job which uses couroutines
      * @param work the lambda to executed later
      */
     @JvmStatic
-    fun createCoroutineJob(scope: CoroutineScope = GlobalScope, work: suspend () -> Unit): Job = SuspendJob(scope, work)
+    fun createCoroutineJob(scope: CoroutineScope = GlobalScope, work: suspend () -> Unit): Job =
+        SuspendJob(scope, work)
 
     /** Extension function to find the lifecycle based on the context */
-    private fun Context.findLifecycle() : Lifecycle? {
+    private fun Context.findLifecycle(): Lifecycle? {
         var context: Context? = this
         while (context != null && context !is LifecycleOwner) {
             context = (context as? ContextWrapper)?.baseContext
@@ -73,19 +74,23 @@ object LazyWorker {
     interface Job {
         /** Execute the work dalayed */
         fun doLater(ms: Long)
+
         /** Execute the work now */
         fun doNow()
     }
 
     /** Wrapper to hold a lambda called work which should be executed later or now */
-    private class MainThreadJob(private val lifecycle: Lifecycle?, private val work: () -> Unit) : Job {
+    private class MainThreadJob(
+        private val lifecycle: Lifecycle?,
+        private val work: Job.() -> Unit
+    ) : Job {
         val handler by lazy { Handler(Looper.getMainLooper()) }
         var lastTask: Task? = null
 
-        /** Execute the work dalayed */
+        /** Execute the work delayed */
         override fun doLater(ms: Long) {
             lastTask?.cancel()
-            val currentTask = Task(lifecycle, work)
+            val currentTask = Task(lifecycle, this, work)
             lastTask = currentTask
             handler.postDelayed(currentTask, ms)
         }
@@ -107,11 +112,14 @@ object LazyWorker {
     }
 
     /** Wrapper to hold a lambda which should be executed with a coroutine */
-    private class SuspendJob(private val scope: CoroutineScope, private val work: suspend () -> Unit) : Job {
+    private class SuspendJob(
+        private val scope: CoroutineScope,
+        private val work: suspend () -> Unit
+    ) : Job {
         /** The currently executed coroutine */
         private var coroutineJob: kotlinx.coroutines.Job? = null
 
-        /** Execute the work dalayed */
+        /** Execute the work delayed */
         override fun doLater(ms: Long) {
             coroutineJob?.cancel()
             coroutineJob = scope.launch {
@@ -131,14 +139,21 @@ object LazyWorker {
         }
     }
 
-    private class Task(private val lifecycle: Lifecycle?, private val work: () -> Unit) : Runnable {
+    /** Holder of the cancelable Job */
+    private class Task(
+        private val lifecycle: Lifecycle?,
+        private val job: Job,
+        private val work: Job.() -> Unit
+    ) : Runnable {
         private var canceled = false
+
+        /** Cancel the planned execution */
         fun cancel() {
             canceled = true
         }
 
         override fun run() {
-            if (!canceled && lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) work()
+            if (!canceled && lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) work(job)
         }
     }
 }
