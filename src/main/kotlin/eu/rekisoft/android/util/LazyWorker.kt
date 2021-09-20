@@ -101,11 +101,13 @@ object LazyWorker {
          */
         override fun doNow() {
             lastTask?.cancel()
-            if (Looper.getMainLooper().thread == Thread.currentThread()) {
-                work()
-            } else {
-                handler.post {
+            if (lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) {
+                if (Looper.getMainLooper().thread == Thread.currentThread()) {
                     work()
+                } else {
+                    handler.post {
+                        work()
+                    }
                 }
             }
         }
