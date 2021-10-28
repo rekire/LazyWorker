@@ -5,14 +5,12 @@
  */
 /**
  * @package eu.rekisoft.android.util
- * This package contains utilities provided by [rekisoft.eu](http://rekisoft.eu/). 
+ * This package contains utilities provided by [rekisoft.eu](https://rekisoft.eu/).
  */
 package eu.rekisoft.android.util;
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +23,7 @@ import kotlinx.coroutines.launch
  * will been executed after the least desired delay.
  *
  * @author René Kilczan
- * @version 2.1
+ * @version 2.0.3
  * @copyright This code is licensed under the Rekisoft Public License.<br/>
  * See https://www.rekisoft.eu/licenses/rkspl.html for more information.
  */
@@ -84,7 +82,7 @@ object LazyWorker {
         private val lifecycle: Lifecycle?,
         private val work: Job.() -> Unit
     ) : Job {
-        val handler by lazy { Handler(Looper.getMainLooper()) }
+        val handler by lazy { ThreadingHelper.createHandler() }
         var lastTask: Task? = null
 
         /** Execute the work delayed */
@@ -102,7 +100,7 @@ object LazyWorker {
         override fun doNow() {
             lastTask?.cancel()
             if (lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) != false) {
-                if (Looper.getMainLooper().thread == Thread.currentThread()) {
+                if (ThreadingHelper.isOnMainThread) {
                     work()
                 } else {
                     handler.post {
