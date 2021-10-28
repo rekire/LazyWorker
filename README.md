@@ -7,13 +7,13 @@ operations and should not been done after each key down.
 
 Edit your `build.gradle` and add this line to your dependencies:
 
-    implementation 'eu.rekisoft.android:lazyworker:2.0.2'
+    implementation 'eu.rekisoft.android:lazyworker:2.0.3'
 
 It should look something like this:
 
     implementation {
         // other dependencies comes here
-        implementation 'eu.rekisoft.android:lazyworker:2.0.2'
+        implementation 'eu.rekisoft.android:lazyworker:2.0.3'
     }
 
 ## Example
