@@ -103,9 +103,9 @@ object LazyWorker {
                 if (ThreadingHelper.isOnMainThread) {
                     work()
                 } else {
-                    handler.post {
-                        work()
-                    }
+                    val currentTask = Task(lifecycle, this, work)
+                    lastTask = currentTask
+                    handler.post(currentTask)
                 }
             }
         }
