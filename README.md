@@ -1,4 +1,4 @@
-# LazyWorker ![Maven Central](https://img.shields.io/maven-central/v/eu.rekisoft.android.util/LazyWorker)
+# LazyWorker [![Maven Central](https://img.shields.io/maven-central/v/eu.rekisoft.android.util/LazyWorker)](https://mvnrepository.com/artifact/eu.rekisoft.android.util/LazyWorker)
 
 LazyWorker is a helper class for doing tasks delayed. Such as checking inputs which require network
 operations and should not been done after each key down.
@@ -7,13 +7,13 @@ operations and should not been done after each key down.
 
 Edit your `build.gradle` and add this line to your dependencies:
 
-    implementation 'eu.rekisoft.android:lazyworker:2.0.3'
+    implementation 'eu.rekisoft.android:lazyworker:2.0.4'
 
 It should look something like this:
 
     implementation {
         // other dependencies comes here
-        implementation 'eu.rekisoft.android:lazyworker:2.0.3'
+        implementation 'eu.rekisoft.android:lazyworker:2.0.4'
     }
 
 ## Example
